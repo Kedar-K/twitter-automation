@@ -23,6 +23,7 @@ class Tweet extends Component {
   componentDidMount() {
     this.tweetContent();
     console.log(this.state);
+    axios.get("/api/tweets").then((data) => console.log(data.data));
   }
 
   getUser = async () => {
@@ -58,22 +59,7 @@ class Tweet extends Component {
     //     console.log(data);
     //   }
     // );
-    var client = new Twitter({
-      consumer_key: this.apikey,
-      consumer_secret: this.apiSecretKey,
-      access_token_key: this.accessToken,
-      access_token_secret: this.accessTokenSecret,
-    });
-    var params = { screen_name: "nodejs" };
-    client.get(
-      "statuses/user_timeline",
-      params,
-      function (error, tweets, response) {
-        if (!error) {
-          console.log(tweets);
-        }
-      }
-    );
+
     var result = await this.getUser();
     if (result && !this.state.error) {
       try {
