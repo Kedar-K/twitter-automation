@@ -106,9 +106,16 @@ class Tweet extends Component {
       console.log("no new tweets available");
       console.log("after fetching");
       console.log(this.state);
-      T.post(
-        "statuses/update",
-        { status: this.state.final_post_content },
+      // T.post(
+      //   "statuses/update",
+      //   { status: this.state.final_post_content },
+      //   function (err, data, response) {
+      //     console.log(data);
+      //   }
+      // );
+      T.get(
+        "search/tweets",
+        { q: "banana since:2011-07-11", count: 100 },
         function (err, data, response) {
           console.log(data);
         }
