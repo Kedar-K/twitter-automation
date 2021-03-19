@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import Twit from "twit";
 import axios from "axios";
+import Twitter from "twitter";
 
 class Tweet extends Component {
   constructor(props) {
@@ -44,6 +45,35 @@ class Tweet extends Component {
   };
 
   main = async () => {
+    // const T = new Twit({
+    //   consumer_key: this.apikey,
+    //   consumer_secret: this.apiSecretKey,
+    //   access_token: this.accessToken,
+    //   access_token_secret: this.accessTokenSecret,
+    // });
+    // T.get(
+    //   "search/tweets",
+    //   { q: "banana since:2011-07-11", count: 100 },
+    //   function (err, data, response) {
+    //     console.log(data);
+    //   }
+    // );
+    var client = new Twitter({
+      consumer_key: this.apikey,
+      consumer_secret: this.apiSecretKey,
+      access_token_key: this.accessToken,
+      access_token_secret: this.accessTokenSecret,
+    });
+    var params = { screen_name: "nodejs" };
+    client.get(
+      "statuses/user_timeline",
+      params,
+      function (error, tweets, response) {
+        if (!error) {
+          console.log(tweets);
+        }
+      }
+    );
     var result = await this.getUser();
     if (result && !this.state.error) {
       try {
@@ -72,12 +102,6 @@ class Tweet extends Component {
   };
 
   tweetContent = async () => {
-    const T = new Twit({
-      consumer_key: this.apikey,
-      consumer_secret: this.apiSecretKey,
-      access_token: this.accessToken,
-      access_token_secret: this.accessTokenSecret,
-    });
     let content, time, image;
     try {
       [content, image, time] = await this.main();
@@ -95,13 +119,13 @@ class Tweet extends Component {
       this.setState({
         content_tweeted: true,
       });
-      T.post(
-        "statuses/update",
-        { status: this.state.final_post_content },
-        function (err, data, response) {
-          console.log(data);
-        }
-      );
+      // T.post(
+      //   "statuses/update",
+      //   { status: this.state.final_post_content },
+      //   function (err, data, response) {
+      //     console.log(data);
+      //   }
+      // );
     } else {
       console.log("no new tweets available");
       console.log("after fetching");
@@ -113,13 +137,13 @@ class Tweet extends Component {
       //     console.log(data);
       //   }
       // );
-      T.get(
-        "search/tweets",
-        { q: "banana since:2011-07-11", count: 100 },
-        function (err, data, response) {
-          console.log(data);
-        }
-      );
+      // T.get(
+      //   "search/tweets",
+      //   { q: "banana since:2011-07-11", count: 100 },
+      //   function (err, data, response) {
+      //     console.log(data);
+      //   }
+      // );
     }
 
     // // POST WITH MEDIA ===========================================
