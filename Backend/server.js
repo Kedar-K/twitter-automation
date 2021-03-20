@@ -39,6 +39,7 @@ app.post("/api/tweet/post", (req, res) => {
     access_token: process.env.ACCESSTOKEN,
     access_token_secret: process.env.ACCESSTOKENSECRET,
   });
+  console.log(req.body.content);
   T.post(
     "statuses/update",
     { status: req.body.content },

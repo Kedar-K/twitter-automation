@@ -2,14 +2,6 @@ import React, { Component } from "react";
 import axios from "axios";
 
 class Tweet extends Component {
-  constructor(props) {
-    super(props);
-    this.apikey = "HWtYvo0zbBo2BXcdFLUVWATqA";
-    this.apiSecretKey = "9Dkb4qcaDsQYAwhUeDGWr0FOGOFDdt1WT00AFd0x1JuYb5lCBM";
-    this.accessToken = "4185077044-pVaoalX9kCxRmIwpxGqSpodj0f79igJIpvZljar";
-    this.accessTokenSecret = "LV9P07QWzQqySl3N8NTRkyFPuTgumBuV0PrRojeBmiVCN";
-  }
-
   state = {
     blog_data: "",
     got_data: false,
@@ -20,8 +12,6 @@ class Tweet extends Component {
 
   componentDidMount() {
     this.tweetContent();
-    // console.log(this.state);
-    // axios.get("/api/tweets").then((data) => console.log(data.data));
   }
 
   getUser = async () => {
@@ -44,30 +34,13 @@ class Tweet extends Component {
   };
 
   main = async () => {
-    // const T = new Twit({
-    //   consumer_key: this.apikey,
-    //   consumer_secret: this.apiSecretKey,
-    //   access_token: this.accessToken,
-    //   access_token_secret: this.accessTokenSecret,
-    // });
-    // T.get(
-    //   "search/tweets",
-    //   { q: "banana since:2011-07-11", count: 100 },
-    //   function (err, data, response) {
-    //     console.log(data);
-    //   }
-    // );
-
     var result = await this.getUser();
     if (result && !this.state.error) {
       try {
         let latest_article = this.state.blog_data.find(
           (article) => article["type_of"] === "article"
         );
-        // console.log(typeof articles["published_at"]);
-        // let my_words = `Hello guys, Check out my latest article
-        // ${latest_article["title"]}`;
-        // let title = my_words + latest_article["title"];
+
         let url = latest_article["canonical_url"];
         let tag_list = latest_article["tag_list"];
         let hash_tags = "\n";
@@ -78,7 +51,6 @@ class Tweet extends Component {
 ${latest_article["title"]}
 ${hash_tags} #100DaysofCode
 ${url}`;
-        // let full_content = title + hash_tags + " #100DaysofCode" + "\n" + url;
         this.setState({
           final_post_content: full_content,
         });
@@ -107,13 +79,7 @@ ${url}`;
       this.setState({
         content_tweeted: true,
       });
-      // T.post(
-      //   "statuses/update",
-      //   { status: this.state.final_post_content },
-      //   function (err, data, response) {
-      //     console.log(data);
-      //   }
-      // );
+
       axios
         .post("/api/tweet/post", {
           content: this.state.final_post_content,
@@ -128,57 +94,7 @@ ${url}`;
       console.log("no new tweets available");
       console.log("after fetching");
       console.log(this.state.final_post_content);
-
-      // T.post(
-      //   "statuses/update",
-      //   { status: this.state.final_post_content },
-      //   function (err, data, response) {
-      //     console.log(data);
-      //   }
-      // );
-      // T.get(
-      //   "search/tweets",
-      //   { q: "banana since:2011-07-11", count: 100 },
-      //   function (err, data, response) {
-      //     console.log(data);
-      //   }
-      // );
     }
-
-    // // POST WITH MEDIA ===========================================
-    // var b64content = fs.readFileSync(image, { encoding: "base64" });
-    // getImage(image, (err, data) => {
-    //   if (err) {
-    //     throw new Error(err);
-    //   }
-    //   return T.post(
-    //     "media/upload",
-    //     { media_data: data },
-    //     function (err, data, response) {
-    //       // now we can assign alt text to the media, for use by screen readers and
-    //       // other text-based presentations and interpreters
-    //       var mediaIdStr = data.media_id;
-    //       var altText = "vs code";
-    //       var meta_params = { media_id: mediaIdStr, alt_text: { text: altText } };
-    //       T.post(
-    //         "media/metadata/create",
-    //         meta_params,
-    //         function (err, data, response) {
-    //           if (!err) {
-    //             // now we can reference the media and post a tweet (media will attach to the tweet)
-    //             var params = {
-    //               status: content,
-    //               media_ids: [mediaIdStr],
-    //             };
-    //             T.post("statuses/update", params, function (err, data, response) {
-    //               console.log(data);
-    //             });
-    //           }
-    //         }
-    //       );
-    //     }
-    //   );
-    // });
   };
 
   render() {
