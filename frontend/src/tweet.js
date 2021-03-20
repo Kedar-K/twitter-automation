@@ -1,7 +1,5 @@
 import React, { Component } from "react";
-import Twit from "twit";
 import axios from "axios";
-import Twitter from "twitter";
 
 class Tweet extends Component {
   constructor(props) {
@@ -22,8 +20,8 @@ class Tweet extends Component {
 
   componentDidMount() {
     this.tweetContent();
-    console.log(this.state);
-    axios.get("/api/tweets").then((data) => console.log(data.data));
+    // console.log(this.state);
+    // axios.get("/api/tweets").then((data) => console.log(data.data));
   }
 
   getUser = async () => {
@@ -37,7 +35,7 @@ class Tweet extends Component {
         blog_data: response.data,
         got_data: true,
       });
-      console.log(this.state);
+      // console.log(this.state);
       return this.state.got_data;
     } catch (error) {
       console.error(error);
@@ -67,20 +65,24 @@ class Tweet extends Component {
           (article) => article["type_of"] === "article"
         );
         // console.log(typeof articles["published_at"]);
-        let my_words = "Hello guys, Check out my latest article\n";
-        let title = my_words + latest_article["title"];
-        let image_path = latest_article["cover_image"];
+        // let my_words = `Hello guys, Check out my latest article
+        // ${latest_article["title"]}`;
+        // let title = my_words + latest_article["title"];
         let url = latest_article["canonical_url"];
         let tag_list = latest_article["tag_list"];
         let hash_tags = "\n";
         hash_tags += tag_list.map((tag) => "#" + tag + " ");
         hash_tags = hash_tags.replace(/,/g, "");
         let published_time = latest_article["published_at"];
+        let full_content = `Hello guys, Check out my latest article
+${latest_article["title"]}
+${hash_tags} #100DaysofCode
+${url}`;
+        // let full_content = title + hash_tags + " #100DaysofCode" + "\n" + url;
         this.setState({
-          final_post_content:
-            title + hash_tags + " #100DaysofCode" + "\n" + url,
+          final_post_content: full_content,
         });
-        return [this.state.final_post_content, image_path, published_time];
+        return [published_time];
       } catch (e) {
         console.log("caught an error", e);
       }
@@ -88,9 +90,9 @@ class Tweet extends Component {
   };
 
   tweetContent = async () => {
-    let content, time, image;
+    let time;
     try {
-      [content, image, time] = await this.main();
+      [time] = await this.main();
     } catch (e) {
       console.log(e);
     }
@@ -112,10 +114,21 @@ class Tweet extends Component {
       //     console.log(data);
       //   }
       // );
+      axios
+        .post("/api/tweet/post", {
+          content: this.state.final_post_content,
+        })
+        .then(function (response) {
+          console.log(response);
+        })
+        .catch(function (error) {
+          console.log(error);
+        });
     } else {
       console.log("no new tweets available");
       console.log("after fetching");
-      console.log(this.state);
+      console.log(this.state.final_post_content);
+
       // T.post(
       //   "statuses/update",
       //   { status: this.state.final_post_content },

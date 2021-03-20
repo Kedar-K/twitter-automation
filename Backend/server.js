@@ -1,15 +1,13 @@
 import express from "express";
 import dotenv from "dotenv";
-import Twitter from "twitter";
 import Twit from "twit";
-
-const apikey = "HWtYvo0zbBo2BXcdFLUVWATqA";
-const apiSecretKey = "9Dkb4qcaDsQYAwhUeDGWr0FOGOFDdt1WT00AFd0x1JuYb5lCBM";
-const accessToken = "4185077044-pVaoalX9kCxRmIwpxGqSpodj0f79igJIpvZljar";
-const accessTokenSecret = "LV9P07QWzQqySl3N8NTRkyFPuTgumBuV0PrRojeBmiVCN";
+import bodyParser from "body-parser";
 
 const app = express();
 dotenv.config();
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json());
+app.use(express.json());
 
 app.get("/", (req, res) => {
   res.send("Api is running....");
@@ -17,17 +15,35 @@ app.get("/", (req, res) => {
 
 app.get("/api/tweets", (req, res) => {
   var T = new Twit({
-    consumer_key: apikey,
-    consumer_secret: apiSecretKey,
-    access_token: accessToken,
-    access_token_secret: accessTokenSecret,
+    consumer_key: process.env.APIKEY,
+    consumer_secret: process.env.APISECRETKEY,
+    access_token: process.env.ACCESSTOKEN,
+    access_token_secret: process.env.ACCESSTOKENSECRET,
   });
   T.get(
     "search/tweets",
-    { q: "banana since:2011-07-11", count: 100 },
+    { q: "banana since:2011-07-11", count: 1 },
     function (err, data, response) {
       console.log(data);
       res.json(data);
+    }
+  );
+});
+
+app.post("/api/tweet/post", (req, res) => {
+  //   console.log(req.body.content);
+  res.json(req.body.content);
+  var T = new Twit({
+    consumer_key: process.env.APIKEY,
+    consumer_secret: process.env.APISECRETKEY,
+    access_token: process.env.ACCESSTOKEN,
+    access_token_secret: process.env.ACCESSTOKENSECRET,
+  });
+  T.post(
+    "statuses/update",
+    { status: req.body.content },
+    function (err, data, response) {
+      console.log(data);
     }
   );
 });
